@@ -1,15 +1,13 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
-// TODO: Replace with your web app's Firebase configuration.
-// You can find this in your Firebase project settings under "Project settings" > "General".
 const firebaseConfig = {
-    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-    appId: import.meta.env.VITE_FIREBASE_APP_ID
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyCzF5bu-YibyR4M6LQCVXiKtaH4UFTI0Bk",
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "wanderlust-fc9ed.firebaseapp.com",
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "wanderlust-fc9ed",
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "wanderlust-fc9ed.appspot.com",
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "469528775376",
+    appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:469528775376:web:297003ca97192fcc87acd5"
 };
 
 // Initialize Firebase

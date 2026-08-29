@@ -1,0 +1,16 @@
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: always
+
+  backend:
+    build: ./Backend
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    restart: always

@@ -26,26 +26,28 @@ app.set("trust proxy", 1);
 // =================================================
 // CORS CONFIGURATION (MUST BE AT THE TOP)
 // =================================================
-const frontendURL = process.env.FRONTEND_URL || 'http://localhost:5173';
-console.log(`[INIT] Frontend URL: ${frontendURL}`);
-// Ensure no trailing slash in the env variable to prevent mismatch
-const cleanFrontendURL = frontendURL.replace(/\/$/, "");
-
 const corsOptions = {
-  origin: [cleanFrontendURL, 'http://localhost:5173', 'http://127.0.0.1:5173'],
+  origin: function (origin, callback) {
+    // Allow all origins (reflection for credentials support across dynamic EC2 IPs and localhost)
+    callback(null, true);
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 };
 
 app.use(cors(corsOptions));
+
 app.use(morgan('dev'));
 
 // =================================================
 // SECURITY MIDDLEWARE
 // =================================================
-// Set security HTTP headers
-app.use(helmet());
+// Set security HTTP headers with cross-origin policies enabled
+app.use(helmet({
+  crossOriginResourcePolicy: false,
+  crossOriginEmbedderPolicy: false
+}));
 
 // Performance: Compression
 app.use(compression());
@@ -108,24 +110,24 @@ const admin = require("./config/firebaseAdmin");
 // =================================================
 // =================================================
 
-const dburl = process.env.ATLASDB_URL;
+const dburl = process.env.ATLASDB_URL || process.env.MONGODB_URI;
 if (!dburl) {
-  console.error("FATAL ERROR: ATLASDB_URL is not defined. Check your Render Environment Variables.");
+  console.error("FATAL ERROR: ATLASDB_URL / MONGODB_URI is not defined.");
 }
 
 const store = MongoStore.create({
   mongoUrl: dburl,
   crypto: {
-    secret: process.env.SECRET,
+    secret: process.env.SECRET || 'grandel_secret',
   },
   touchAfter: 24 * 60 * 60,
 });
 
-const isProd = process.env.NODE_ENV === 'production';
+const isSecureCookie = process.env.FORCE_SECURE_COOKIES === 'true';
 
 const sessionOptions = {
   store: store,
-  secret: process.env.SECRET,
+  secret: process.env.SECRET || 'grandel_secret',
   resave: false,
   saveUninitialized: true,
   proxy: true,
@@ -133,11 +135,11 @@ const sessionOptions = {
     expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
     maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
-    // 🛡️ Enhanced Mobile/Cross-Site Cookie Security
-    secure: isProd || process.env.FORCE_SECURE_COOKIES === 'true',
-    sameSite: isProd ? 'none' : 'lax',
+    secure: isSecureCookie,
+    sameSite: isSecureCookie ? 'none' : 'lax',
   },
 };
+
 
 app.use(session(sessionOptions));
 //passport

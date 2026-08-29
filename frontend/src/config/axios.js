@@ -2,24 +2,19 @@ import axios from 'axios';
 
 let baseURL = import.meta.env.VITE_API_BASE_URL;
 
-if (!baseURL) {
+if (typeof window !== 'undefined') {
     const hostname = window.location.hostname;
-    const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
-    const isIP = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(hostname);
-
+    const isLocal = hostname === 'localhost' || hostname === '127.0.0.1' || /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(hostname);
     if (isLocal) {
-        baseURL = 'http://localhost:8080';
-    } else if (isIP) {
         baseURL = `http://${hostname}:8080`;
-        console.log("📱 Mobile/IP access detected. Using baseURL:", baseURL);
-    } else {
-        // PRODUCTION FALLBACK: If VITE_API_BASE_URL is missing, we try to guess it or warn.
-        // Based on your Render dashboard, the URL is:
-        baseURL = 'https://grandel.onrender.com'; 
-        console.warn("⚠️ VITE_API_BASE_URL is missing! Defaulting to production backend:", baseURL);
     }
 }
+
+if (!baseURL) {
+    baseURL = 'http://localhost:8080';
+}
 console.log("🔗 API Endpoint:", baseURL);
+
 
 // Create axios instance with default config
 const axiosInstance = axios.create({
