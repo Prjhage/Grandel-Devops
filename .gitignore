@@ -9,6 +9,7 @@ backend.env
 !*.env.example
 *.pem
 *.key
+ENV_FILE
 
 # Large Archives & Binaries
 *.tar.gz
