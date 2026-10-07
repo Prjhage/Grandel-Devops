@@ -29,7 +29,8 @@ jobs:
 
       - name: Run backend tests
         working-directory: Backend
-        run: npm test || echo "No tests defined yet, skipping."
+        continue-on-error: true
+        run: npm test
 
       - name: Install frontend dependencies
         working-directory: frontend
@@ -37,7 +38,8 @@ jobs:
 
       - name: Lint frontend
         working-directory: frontend
-        run: npm run lint || echo "Lint warnings found, not blocking build."
+        continue-on-error: true
+        run: npm run lint
 
   # ── JOB 2: Build Docker images & push to Docker Hub ────────────────────────
   build-and-push:
