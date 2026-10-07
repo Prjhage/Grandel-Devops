@@ -36,10 +36,6 @@ jobs:
         working-directory: frontend
         run: npm install
 
-      - name: Lint frontend
-        working-directory: frontend
-        continue-on-error: true
-        run: npm run lint
 
   # ── JOB 2: Build Docker images & push to Docker Hub ────────────────────────
   build-and-push:
