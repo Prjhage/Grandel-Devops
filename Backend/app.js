@@ -190,6 +190,20 @@ app.get("/", (req, res) => {
   res.redirect(redirectURL);
 });
 
+// Health Check Route (MongoDB connectivity & service status)
+app.get("/health", (req, res) => {
+  const dbConnected = mongoose.connection.readyState === 1;
+
+  const healthy = dbConnected;
+
+  res.status(healthy ? 200 : 503).json({
+    status: healthy ? "healthy" : "unhealthy",
+    service: "grandel-backend",
+    database: dbConnected ? "connected" : "disconnected",
+    timestamp: new Date().toISOString()
+  });
+});
+
 // API Route for Health Check (and Keep-Alive)
 app.get("/api/health", (req, res) => {
   res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
